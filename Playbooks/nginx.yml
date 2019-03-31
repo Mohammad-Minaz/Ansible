@@ -1,0 +1,28 @@
+---
+- hosts: webserver
+  become: yes
+  tasks:
+   - name: installing nginx on ubuntu
+     apt:
+       name: nginx
+       update_cache: yes
+       state: present
+     when: ansible_os_family == "Debian"
+   - name: installing nginx on redaht
+     yum:
+       name: nginx
+       update-cache: yes
+       state: present
+     when: ansible_os_family == "RedHat"
+   - name: starting the service of nginx on ubuntu
+     service:
+       name: nginx
+       state: started
+       enabled: yes
+     when: ansible_os_family == "Debian"
+   - name: starting the service of nginx on redaht
+     service:
+       name: nginx
+       state: started
+       enabled: yes
+     when: ansible_os_family == "RedHat"

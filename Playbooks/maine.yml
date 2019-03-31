@@ -1,0 +1,28 @@
+---
+- hosts: webserver
+  become: yes
+  tasks: 
+   - name: update package and install apache2 for ubuntu
+     apt:
+       name: apache2
+       update_cache: yes
+       state: present
+     when: ansible_os_family == "Debian"
+   - name: update package and install httpd for redhat
+     yum:
+       name: httpd
+       update_cache: yes
+       state: present
+     when: ansible_os_family == "RedHat"
+   - name: start service for apache2 in ubuntu
+     service:
+       name: apache2
+       state: started
+       enabled: yes
+     when: ansible_os_family == "Debian"
+   - name: start service for httpd in redhat
+     service:
+       name: httpd
+       state: started
+       enabled: yes
+     when: ansible_os_family == "RedHat"

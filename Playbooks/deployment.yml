@@ -1,0 +1,32 @@
+---
+- hosts: appserver
+  become: yes
+  tasks:
+   - name: Installing java default-jre
+     apt:
+       name: default-jre
+       update_cache: yes
+       state: present
+   - name: Installing java default-jdk
+     apt:
+       name: default-jdk
+       state: present
+   - name: Installing java oracle-java8-installer
+     apt:
+       name: oracle-java8-installer
+       state: present
+   - name: Installing tomcat7
+     apt:
+       name: tomcat7
+       update_cache: yes
+       state: present
+   - name: Replacing the file at /etc/default/tomcat7
+     replace:
+       path: /etc/default/tomcat7
+       regexp: 'JAVA_OPTS="-Djava.awt.headless=true -Xmx128m -XX:+UseConcMarkSweepGC"'
+       replace: 'JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Xmx512m -XX:MaxPermSize=256m -XX:+UseConcMarkSweepGC"'
+   - name: Restarting the service of Tomcat7
+     service:
+       name: tomcat7
+       state: restarted
+       enabled: yes

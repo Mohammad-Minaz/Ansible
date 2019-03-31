@@ -1,0 +1,8 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: copy the dynamic file.
+    template:
+      src: info.txt.j2
+      dest: /home/ansible/info.txt.j2

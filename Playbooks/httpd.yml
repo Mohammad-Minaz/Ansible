@@ -1,0 +1,42 @@
+---
+- hosts: webserver
+  become: yes
+  handlers:
+    - name: restart httpd
+      service:
+        name: httpd
+        state: restarted
+        enabled: yes
+  tasks:
+   - name: this Insatallation only for redhat it will fail in other platforms
+     fail:
+       msg: "Installation is not supported for this paltform"
+     when: ansible_os_family != "RedHat"
+   - debug:
+       msg: starting the Insatallation of httpd
+   - name: Insatallation of LAMP 
+     yum:
+       name: httpd
+       update_cache: yes
+       state: present
+   - debug:
+       msg: starting the service for httpd
+     notify:
+     - restart httpd
+   - debug:
+       msg: installing all the modules of php
+   - name: Installing php Modules
+     yum:
+       name: "{{ item }}"
+       state: present
+     loop:
+      - php
+      - php-mysql
+      - php-pdo
+      - php-gd
+   - name: Copy a file 
+     copy:
+       src: /home/ansible/info.php
+       dest: /var/www/html/info.php
+     notify:
+     - restart httpd
